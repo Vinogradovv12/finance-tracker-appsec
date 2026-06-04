@@ -1,0 +1,10 @@
+# cache
+bin/
+obj/
+
+# development secrets
+appsettings.Development.json
+
+# user secrets
+.vs/
+.DS_Store
