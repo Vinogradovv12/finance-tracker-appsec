@@ -4,6 +4,7 @@ obj/
 
 # development secrets
 appsettings.Development.json
+.env
 
 # user secrets
 .vs/

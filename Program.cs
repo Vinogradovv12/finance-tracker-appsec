@@ -40,6 +40,31 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers.Clear();
+        document.Servers.Add(new()
+
+        {
+            Url = "http://localhost:9090"
+        });
+        return Task.CompletedTask;
+    });
+});
+
 builder.Services.AddCustomRateLimiter();
 
 builder.Services.Configure<JwtOptions>(
@@ -59,6 +84,25 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 
 var app = builder.Build();
+
+for (int i = 0; i < 10; i++)
+{
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        db.Database.Migrate();
+        break;
+    }
+    catch
+    {
+        if (i == 9)
+            throw;
+
+        await Task.Delay(5000);
+    }
+}
 
 app.UseException();
 
@@ -82,7 +126,7 @@ if (app.Environment.IsDevelopment())
 
         options.Authentication = new ScalarAuthenticationOptions
         {
-            PreferredSecuritySchemes = ["Bearer"]
+            PreferredSecurityScheme = "Bearer"
         };
     });
 }
