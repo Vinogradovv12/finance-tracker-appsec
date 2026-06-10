@@ -1,0 +1,49 @@
+services:
+
+  postgres:
+    image: postgres:18.1
+
+    container_name: financetracker-db
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  api:
+    build:
+      context: .
+
+      dockerfile: Dockerfile
+
+    container_name: financetracker-api
+
+    env_file:
+      - .env
+
+    ports:
+      - "9090:8080"
+
+    depends_on:
+      - postgres
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: ${CONNECTION_STRING_DEFAULTCONNECTION}
+      JwtOptions__SecretKey: ${JWT_SECRET_KEY}
+      JwtOptions__ExpiresHours: ${JWT_EXPIRES_HOURS}
+      JwtOptions__Issuer: ${JWT_ISSUER}
+      JwtOptions__Audience: ${JWT_AUDIENCE}
+
+
+volumes:
+  postgres_data:

@@ -270,3 +270,23 @@ Implemented protections include:
 No critical vulnerabilities were identified during the review.
 
 The most significant remaining issue is unrestricted pagination, followed by several low-risk hardening opportunities.
+
+---
+
+## Security Review Update
+
+Date: 2026-06-04
+
+## Resolved Findings
+
+### F-002 Missing Foreign Key
+
+Status: Fixed
+
+### F-003 Missing UserId Index
+
+Status: Fixed
+
+### F-004 Missing Amount Constraint
+
+Status: Fixed

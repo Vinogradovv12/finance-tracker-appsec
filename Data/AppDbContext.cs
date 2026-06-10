@@ -19,5 +19,21 @@ public class AppDbContext : DbContext
             .HasIndex(u => u.Email)
             .IsUnique()
             .HasDatabaseName("IX_Unique_User_Email");
+
+        modelBuilder.Entity<TransactionEntity>()
+            .HasOne(t => t.User)
+            .WithMany(u => u.Transactions)
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<TransactionEntity>()
+            .HasIndex(t => t.UserId);
+
+        modelBuilder.Entity<TransactionEntity>()
+            .ToTable(t =>
+                t.HasCheckConstraint(
+                    "CK_Transaction_Amount",
+                    "\"Amount\" > 0"
+                ));
     }
 }
