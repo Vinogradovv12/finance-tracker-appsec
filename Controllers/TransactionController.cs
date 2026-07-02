@@ -54,9 +54,6 @@ public class TransactionController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTransactionRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var userId = User.GetUserId();
 
         await _service.AddTransactionAsync(
