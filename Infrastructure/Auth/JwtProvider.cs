@@ -1,5 +1,5 @@
 using FinanceTracker.Api.Data.Entities;
-using FinanceTracker.Api.Services.Interfaces;
+using FinanceTracker.Api.Infrastructure.Auth.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
