@@ -42,14 +42,23 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("DevelopmentCorsPolicy", policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyMethod()            
+              .AllowAnyHeader()            
+              .AllowCredentials();         
+    });
+    
     options.AddPolicy("AllowAll", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -117,7 +126,7 @@ app.UseStaticFiles();
 
 app.UseRateLimiter();
 
-app.UseCors("AllowAll");
+app.UseCors("DevelopmentCorsPolicy");
 
 if (app.Environment.IsDevelopment())
 {
