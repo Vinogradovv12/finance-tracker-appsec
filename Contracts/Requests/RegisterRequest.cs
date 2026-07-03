@@ -10,6 +10,6 @@ public class RegisterRequest
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required")]
-    [StringLength(72, MinimumLength = 8, ErrorMessage = "Invalid password")]
+    [StringLength(128, MinimumLength = 8, ErrorMessage = "Invalid password")]
     public string Password { get; set; } = string.Empty;
 }

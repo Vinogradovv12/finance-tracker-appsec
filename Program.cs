@@ -9,6 +9,8 @@ using FinanceTracker.Api.Infrastructure.Auth;
 using FinanceTracker.Api.Extensions;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using FinanceTracker.Api.Infrastructure.Auth.Interfaces;
+using FinanceTracker.Api.Infrastructure.Auth.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +72,9 @@ builder.Services.AddCustomRateLimiter();
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(nameof(JwtOptions)));
 
+builder.Services.Configure<Argon2Options>(
+    builder.Configuration.GetSection(nameof(Argon2Options)));
+
 builder.Services.AddApiAuthentication(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -79,6 +84,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddSingleton<IAppLogger, ConsoleLogger>();
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
