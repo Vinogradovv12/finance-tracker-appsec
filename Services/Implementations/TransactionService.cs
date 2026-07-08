@@ -97,5 +97,7 @@ public class TransactionService : ITransactionService
 
         _db.Transactions.Remove(transacton);
         await _db.SaveChangesAsync();
+
+         _logger.Info($"Transaction deleted: {transactionId} for user {userId}");
     }
 }
