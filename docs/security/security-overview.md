@@ -255,11 +255,8 @@ These improvements are planned for future iterations.
 
 Plans include adding the following improvements:
 
-* Gitleaks scanning
-* OWASP ZAP assessment
 * GitHub Actions security pipeline
 * Threat modeling expansion
-* Security headers
 * Refresh token support
 
 ---

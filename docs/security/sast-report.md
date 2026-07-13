@@ -206,6 +206,5 @@ The application built successfully.
 
 * Semgrep integration into GitHub Actions
 * Dependency vulnerability scanning
-* Secrets detection (Gitleaks)
 * SARIF reporting
 * Custom Semgrep rules
