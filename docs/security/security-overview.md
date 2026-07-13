@@ -255,7 +255,6 @@ These improvements are planned for future iterations.
 
 Plans include adding the following improvements:
 
-* Semgrep integration
 * Gitleaks scanning
 * OWASP ZAP assessment
 * GitHub Actions security pipeline
