@@ -120,6 +120,7 @@ for (int i = 0; i < 10; i++)
 }
 
 app.UseException();
+app.UseSecurityHeaders(); 
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

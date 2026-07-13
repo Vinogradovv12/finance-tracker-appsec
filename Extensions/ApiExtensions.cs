@@ -1,5 +1,6 @@
 using FinanceTracker.Api.Common;
 using FinanceTracker.Api.Infrastructure.Auth;
+using FinanceTracker.Api.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FinanceTracker.Api.Extensions;
@@ -55,5 +56,10 @@ public static class ApiExtensions
         });
 
         services.AddAuthorization();
+    }
+
+    public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<SecurityHeadersMiddleware>();
     }
 }
