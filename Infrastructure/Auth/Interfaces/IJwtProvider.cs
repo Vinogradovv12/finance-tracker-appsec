@@ -1,6 +1,6 @@
 using FinanceTracker.Api.Data.Entities;
 
-namespace FinanceTracker.Api.Services.Interfaces;
+namespace FinanceTracker.Api.Infrastructure.Auth.Interfaces;
 
 public interface IJwtProvider
 {

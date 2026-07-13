@@ -12,7 +12,7 @@ public static class TransactionMapper
             Id = t.Id,
             Amount = t.Amount,
             Category = t.Category,
-            Type = t is Income ? TransactionsType.Income : TransactionsType.Expense
+            Type = t.Type
         };
     }
 }

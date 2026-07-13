@@ -9,6 +9,8 @@ using FinanceTracker.Api.Infrastructure.Auth;
 using FinanceTracker.Api.Extensions;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using FinanceTracker.Api.Infrastructure.Auth.Interfaces;
+using FinanceTracker.Api.Infrastructure.Auth.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,14 +42,23 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("DevelopmentCorsPolicy", policy =>
+    {
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyMethod()            
+              .AllowAnyHeader()            
+              .AllowCredentials();         
+    });
+    
     options.AddPolicy("AllowAll", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -70,6 +81,9 @@ builder.Services.AddCustomRateLimiter();
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(nameof(JwtOptions)));
 
+builder.Services.Configure<Argon2Options>(
+    builder.Configuration.GetSection(nameof(Argon2Options)));
+
 builder.Services.AddApiAuthentication(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -79,6 +93,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddSingleton<IAppLogger, ConsoleLogger>();
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
@@ -105,13 +120,14 @@ for (int i = 0; i < 10; i++)
 }
 
 app.UseException();
+app.UseSecurityHeaders(); 
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRateLimiter();
 
-app.UseCors("AllowAll");
+app.UseCors("DevelopmentCorsPolicy");
 
 if (app.Environment.IsDevelopment())
 {

@@ -20,9 +20,6 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         await _service.RegisterUserAsync(request.Email, request.Password);
 
         return Ok(new { Message = "User registered successfully" }); //Using 200 to avoid leaking information about existing users
@@ -31,9 +28,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var token = await _service.LoginUserAsync(request.Email, request.Password);
 
         return Ok(new { access_token = token });

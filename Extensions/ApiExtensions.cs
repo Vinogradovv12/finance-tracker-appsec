@@ -1,5 +1,6 @@
 using FinanceTracker.Api.Common;
 using FinanceTracker.Api.Infrastructure.Auth;
+using FinanceTracker.Api.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FinanceTracker.Api.Extensions;
@@ -22,8 +23,10 @@ public static class ApiExtensions
         {
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
-                ValidateIssuer = false,
-                ValidateAudience = false,
+                ValidateIssuer = true,
+                ValidIssuer = jwtOptions!.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwtOptions!.Audience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
@@ -53,5 +56,10 @@ public static class ApiExtensions
         });
 
         services.AddAuthorization();
+    }
+
+    public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<SecurityHeadersMiddleware>();
     }
 }

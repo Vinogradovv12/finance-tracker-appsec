@@ -3,6 +3,7 @@ using FinanceTracker.Api.Common;
 using FinanceTracker.Api.Data;
 using FinanceTracker.Api.Data.Entities;
 using FinanceTracker.Api.Exceptions;
+using FinanceTracker.Api.Infrastructure.Auth.Interfaces;
 using FinanceTracker.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,13 @@ public class AuthService : IAuthService
     private readonly AppDbContext _context;
     private readonly IAppLogger _logger;
     private readonly IJwtProvider _provider;
-    public AuthService(AppDbContext context, IAppLogger logger, IJwtProvider provider)
+    private readonly IPasswordHasher _passwordHasher;
+    public AuthService(AppDbContext context, IAppLogger logger, IJwtProvider provider, IPasswordHasher passwordHasher)
     {
         _context = context;
         _logger = logger;
         _provider = provider;
+        _passwordHasher = passwordHasher;
     }
     public async Task RegisterUserAsync(string email, string password)
     {
@@ -26,7 +29,7 @@ public class AuthService : IAuthService
             throw new ArgumentException("Invalid email address.", nameof(email));
         }
 
-        if (string.IsNullOrWhiteSpace(password) || password.Length > 72 || password.Length < 8)
+        if (string.IsNullOrWhiteSpace(password) || password.Length > 128 || password.Length < 8)
         {
             throw new ArgumentException("Invalid password.", nameof(password));
         }
@@ -45,12 +48,14 @@ public class AuthService : IAuthService
         {
             Id = Guid.NewGuid(),
             Email = normalizedEmail,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            PasswordHash = _passwordHasher.HashPassword(password),
             CreatedAt = DateTime.UtcNow
         };
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
+
+        _logger.Info($"New user registered: {normalizedEmail}");
     }
 
     public async Task<string> LoginUserAsync(string email, string password)
@@ -65,7 +70,7 @@ public class AuthService : IAuthService
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == normalizedEmail);
 
-        bool isValid = user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+        bool isValid = user != null && _passwordHasher.VerifyPassword(password, user.PasswordHash);
 
         if (!isValid)
         {

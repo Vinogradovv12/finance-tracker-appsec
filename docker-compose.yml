@@ -43,6 +43,11 @@ services:
       JwtOptions__ExpiresHours: ${JWT_EXPIRES_HOURS}
       JwtOptions__Issuer: ${JWT_ISSUER}
       JwtOptions__Audience: ${JWT_AUDIENCE}
+      Argon2Options__SaltSize: ${ARGON2_SALT_SIZE}
+      Argon2Options__DegreeOfParallelism: ${ARGON2_DEGREE_OF_PARALLELISM}
+      Argon2Options__Iterations: ${ARGON2_ITERATIONS}
+      Argon2Options__MemorySize: ${ARGON2_MEMORY_SIZE}
+      Argon2Options__HashSize: ${ARGON2_HASH_SIZE}
 
 
 volumes:
