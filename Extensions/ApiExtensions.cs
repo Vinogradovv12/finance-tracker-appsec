@@ -23,7 +23,9 @@ public static class ApiExtensions
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
                 ValidateIssuer = true,
+                ValidIssuer = jwtOptions!.Issuer,
                 ValidateAudience = true,
+                ValidAudience = jwtOptions!.Audience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
